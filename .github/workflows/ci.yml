@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: test (py${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Run test suite
+        run: python -m unittest discover -s tests -v
+
+      - name: Verify the package imports cleanly
+        run: python -c "import baselineguard; print(baselineguard.__version__)"
+
+      - name: Smoke-test the CLI
+        run: |
+          mkdir -p /tmp/bg-ci/monitored /tmp/bg-ci/state
+          echo "hello" > /tmp/bg-ci/monitored/a.txt
+          cat > /tmp/bg-ci/config.toml <<EOF
+          state_dir = "/tmp/bg-ci/state"
+          [files]
+          paths = ["/tmp/bg-ci/monitored"]
+          excludes = []
+          EOF
+          python -m baselineguard -c /tmp/bg-ci/config.toml init
+          python -m baselineguard -c /tmp/bg-ci/config.toml scan
+
+  lint:
+    name: lint (ruff)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install ruff
+      - run: ruff check baselineguard tests
