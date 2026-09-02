@@ -24,7 +24,7 @@ class Severity(IntEnum):
     CRITICAL = 4
 
     @classmethod
-    def from_name(cls, name: str) -> "Severity":
+    def from_name(cls, name: str) -> Severity:
         return cls[name.upper()]
 
 

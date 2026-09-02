@@ -27,11 +27,14 @@ class SshKeyCollector:
             home = Path(user["home"])
             for rel in ("authorized_keys", "authorized_keys2"):
                 key_file = home / ".ssh" / rel
-                if not key_file.is_file():
-                    continue
                 try:
+                    if not key_file.is_file():
+                        continue
                     lines = key_file.read_text().splitlines()
                 except OSError:
+                    # Unreadable (permission denied, broken symlink, home
+                    # dir on unmounted storage, ...) -- skip this user
+                    # rather than aborting the whole scan.
                     continue
                 for line in lines:
                     line = line.strip()

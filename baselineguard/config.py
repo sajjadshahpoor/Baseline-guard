@@ -87,11 +87,11 @@ class Config:
         return self.state_dir / "scan-history.jsonl"
 
     @classmethod
-    def default(cls) -> "Config":
+    def default(cls) -> Config:
         return cls()
 
     @classmethod
-    def load(cls, path: Path | None = None) -> "Config":
+    def load(cls, path: Path | None = None) -> Config:
         """Load config from *path*, or the first existing default location.
 
         Falls back to built-in defaults if no file is found, so the tool
@@ -104,7 +104,7 @@ class Config:
         return cls.default()
 
     @classmethod
-    def _from_toml(cls, path: Path) -> "Config":
+    def _from_toml(cls, path: Path) -> Config:
         with open(path, "rb") as handle:
             raw = tomllib.load(handle)
 

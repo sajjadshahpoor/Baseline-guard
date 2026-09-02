@@ -1,3 +1,4 @@
+import os
 import tempfile
 import unittest
 from pathlib import Path
@@ -36,6 +37,22 @@ class SshKeyCollectorTests(unittest.TestCase):
         )
         records = SshKeyCollector(passwd_path=str(self.passwd_path)).collect()
         self.assertEqual(len(records), 2)
+
+    def test_unreadable_ssh_dir_is_skipped_not_raised(self):
+        # Regression test: scanning as a non-root user hits home
+        # directories (classically /root/.ssh) it has no permission to
+        # even stat. The collector must skip that user, not crash the
+        # whole scan -- see SshKeyCollector.collect().
+        if os.geteuid() == 0:
+            self.skipTest("running as root: permission bits don't restrict access")
+
+        (self.home / ".ssh" / "authorized_keys").write_text("ssh-ed25519 AAAA1 a@x\n")
+        ssh_dir = self.home / ".ssh"
+        os.chmod(ssh_dir, 0o000)
+        self.addCleanup(os.chmod, ssh_dir, 0o700)
+
+        records = SshKeyCollector(passwd_path=str(self.passwd_path)).collect()
+        self.assertEqual(records, {})
 
     def test_added_key_is_detectable_as_a_new_record(self):
         key_file = self.home / ".ssh" / "authorized_keys"

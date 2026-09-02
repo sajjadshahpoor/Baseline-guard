@@ -3,9 +3,9 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from baselineguard.diff import Severity
 from baselineguard.collectors.network import NetworkCollector
 from baselineguard.collectors.processes import ProcessCollector
+from baselineguard.diff import Severity
 
 
 class ProcessCollectorTests(unittest.TestCase):

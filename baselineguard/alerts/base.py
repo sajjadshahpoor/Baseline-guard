@@ -6,8 +6,8 @@ import time
 from dataclasses import dataclass, field
 from typing import Protocol
 
-from ..diff import Change, Severity
 from ..collectors.base import Finding
+from ..diff import Change, Severity
 
 
 @dataclass
@@ -19,7 +19,7 @@ class Alert:
     timestamp: float = field(default_factory=time.time)
 
     @classmethod
-    def from_change(cls, change: Change) -> "Alert":
+    def from_change(cls, change: Change) -> Alert:
         return cls(
             severity=change.severity,
             collector=change.collector,
@@ -28,7 +28,7 @@ class Alert:
         )
 
     @classmethod
-    def from_finding(cls, finding: Finding) -> "Alert":
+    def from_finding(cls, finding: Finding) -> Alert:
         return cls(
             severity=finding.severity,
             collector=finding.collector,

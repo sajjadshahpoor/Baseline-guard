@@ -22,5 +22,6 @@ class LogFileAlertChannel:
             return
         self.path.parent.mkdir(parents=True, exist_ok=True)
         with open(self.path, "a", encoding="utf-8") as handle:
-            for alert in alerts:
-                handle.write(json.dumps(alert.to_dict(), sort_keys=True) + "\n")
+            handle.writelines(
+                json.dumps(alert.to_dict(), sort_keys=True) + "\n" for alert in alerts
+            )
