@@ -1,0 +1,41 @@
+# Example configuration for Baseline Guard.
+#
+# Copy this file to /etc/baseline-guard/baseline-guard.toml (or
+# ~/.config/baseline-guard/baseline-guard.toml for a per-user setup) and
+# adjust it for your host. Every field shown here has a built-in default,
+# so you only need to list the ones you want to change.
+
+state_dir = "/var/lib/baseline-guard"
+watch_interval_seconds = 300
+
+[files]
+paths = ["/etc", "/bin", "/sbin", "/usr/bin", "/usr/sbin", "/boot"]
+excludes = ["*.log", "*/tmp/*", "*/cache/*", "/etc/mtab"]
+algorithm = "sha256"
+max_file_size_mb = 200
+follow_symlinks = false
+
+[heuristics]
+suspicious_process_dirs = ["/tmp", "/var/tmp", "/dev/shm", "/run/shm"]
+allowed_listen_ports = [22, 80, 443]
+flag_deleted_running_binaries = true
+
+[alerts]
+console = true
+log_file = "/var/lib/baseline-guard/scan-history.jsonl"
+
+[alerts.email]
+enabled = false
+smtp_host = "smtp.example.com"
+smtp_port = 587
+use_tls = true
+username = "alerts@example.com"
+password_env_var = "BASELINE_GUARD_SMTP_PASSWORD"
+from_addr = "baseline-guard@example.com"
+to_addrs = ["secops@example.com"]
+min_severity = "high"
+
+[alerts.webhook]
+enabled = false
+url = "https://hooks.slack.com/services/T000/B000/XXXXXXXXXXXXXXXXXXXXXXXX"
+min_severity = "medium"
