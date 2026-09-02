@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "baseline-guard"
+version = "0.1.0"
+description = "A lightweight, dependency-free host-based intrusion detection system (HIDS) built around signed system baselines."
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [{ name = "Sajjad Shahpoor" }]
+requires-python = ">=3.11"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Topic :: Security",
+]
+
+[project.urls]
+Homepage = "https://github.com/sajjadshahpoor/Baseline-guard"
+Issues = "https://github.com/sajjadshahpoor/Baseline-guard/issues"
+
+[project.scripts]
+baseline-guard = "baselineguard.cli:main"
+
+[project.optional-dependencies]
+dev = ["ruff"]
+
+[tool.setuptools.packages.find]
+include = ["baselineguard*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
