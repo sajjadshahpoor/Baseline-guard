@@ -1,0 +1,21 @@
+[Unit]
+Description=Baseline Guard - host baseline scan
+Documentation=https://github.com/sajjadshahpoor/Baseline-guard
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/baseline-guard --config /etc/baseline-guard/baseline-guard.toml scan
+# 'scan' exits non-zero when it finds something at/above --fail-on,
+# which is the normal, expected way to surface a finding to systemd/
+# journald and any Alert=... watchdog on top of this unit -- don't
+# treat a non-zero exit here as a broken service.
+SuccessExitStatus=0 1
+
+# Defense in depth for the service itself, since it runs with the
+# broad read access required to hash /etc, /bin, /sbin, etc.
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/baseline-guard
+ProtectHome=read-only
+PrivateTmp=true

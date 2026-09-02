@@ -1,0 +1,14 @@
+[Unit]
+Description=Run Baseline Guard scan on a schedule
+Documentation=https://github.com/sajjadshahpoor/Baseline-guard
+
+[Timer]
+# Every 5 minutes. Adjust to match your environment -- shorter narrows
+# the detection window, longer reduces I/O from repeatedly hashing
+# large trees like /usr.
+OnBootSec=2min
+OnUnitActiveSec=5min
+Unit=baseline-guard.service
+
+[Install]
+WantedBy=timers.target
